@@ -1,5 +1,11 @@
-import { Casa } from "./casa.js";
-import { leer, escribir, limpiar, jsonToObject, objectToJson } from "./local-storage-async.js";
+import { Anuncio } from "./Anuncio.js";
+import {
+  leer,
+  escribir,
+  limpiar,
+  jsonToObject,
+  objectToJson,
+} from "./local-storage-async.js";
 import { mostrarSpinner, ocultarSpinner } from "./spinner.js";
 
 const KEY_STORAGE = "casas";
@@ -21,14 +27,10 @@ async function loadItems() {
   ocultarSpinner();
 
   const objetos = jsonToObject(str) || [];
-  
-  objetos.forEach(obj => {
-    const model = new Casa(
-        obj.id,
-        obj.titulo,
-        obj.precio
-    );
-  
+
+  objetos.forEach((obj) => {
+    const model = new Anuncio(...Object.values(obj));
+
     items.push(model);
   });
 
@@ -41,39 +43,43 @@ async function loadItems() {
  * se agregaran dependiendo de la cantidad de items que poseo
  */
 function rellenarTabla() {
-    const tabla = document.getElementById("table-items");
-    let tbody = tabla.getElementsByTagName('tbody')[0];
-  
-    tbody.innerHTML = ''; // Me aseguro que esté vacio, hago referencia al agregar otro
+  const tabla = document.getElementById("table-items");
+  let tbody = tabla.getElementsByTagName("tbody")[0];
 
-    const celdas = ["id", "titulo", "precio"];
+  tbody.innerHTML = ""; // Me aseguro que esté vacio, hago referencia al agregar otro
 
-    items.forEach((item) => {
-        let nuevaFila = document.createElement("tr");
+  const celdas = ["id", "titulo", "descripcion", "transaccion", "precio"];
 
-        celdas.forEach((celda) => {
-            let nuevaCelda = document.createElement("td");
-            nuevaCelda.textContent = item[celda];
+  items.forEach((item) => {
+    let nuevaFila = document.createElement("tr");
 
-            nuevaFila.appendChild(nuevaCelda);
-        });
+    celdas.forEach((celda) => {
+      let nuevaCelda = document.createElement("td");
+      nuevaCelda.textContent = item[celda];
 
-        // Agregar la fila al tbody
-        tbody.appendChild(nuevaFila);
+      nuevaFila.appendChild(nuevaCelda);
     });
-  }
+
+    // Agregar la fila al tbody
+    tbody.appendChild(nuevaFila);
+  });
+}
 
 function escuchandoFormulario() {
   formulario.addEventListener("submit", async (e) => {
+    mostrarSpinner();
+
     // Luego del primer parcial, comenzaremos a enviar los datos a un externo
     // evito el comportamiento que realiza por defecto
     e.preventDefault();
 
-    var fechaActual = new Date();
+    let fechaActual = new Date();
 
-    const model = new Casa(
+    const model = new Anuncio(
       fechaActual.getTime(),
       formulario.querySelector("#titulo").value,
+      formulario.querySelector("#descripcion").value,
+      document.querySelector('input[name="transaccion"]:checked').value,
       formulario.querySelector("#precio").value
     );
 
@@ -82,20 +88,20 @@ function escuchandoFormulario() {
     if (respuesta.success) {
       items.push(model);
       const str = objectToJson(items);
-      
+
       try {
         await escribir(KEY_STORAGE, str);
 
         actualizarFormulario();
         rellenarTabla();
-      }
-      catch (error) {
+      } catch (error) {
         alert(error);
       }
-    }
-    else {
+    } else {
       alert(respuesta.rta);
     }
+
+    ocultarSpinner();
   });
 }
 
@@ -107,19 +113,20 @@ function escuchandoBtnDeleteAll() {
   const btn = document.getElementById("btn-delete-all");
 
   btn.addEventListener("click", async (e) => {
+    const rta = confirm("Desea eliminar todos los Items?");
+    mostrarSpinner();
 
-    const rta = confirm('Desea eliminar todos los Items?');
-
-    if(rta) {
+    if (rta) {
       items.splice(0, items.length);
 
       try {
         await limpiar(KEY_STORAGE);
         rellenarTabla();
-      }
-      catch (error) {
+      } catch (error) {
         alert(error);
       }
     }
+
+    ocultarSpinner();
   });
 }

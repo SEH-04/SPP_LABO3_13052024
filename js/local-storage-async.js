@@ -1,7 +1,7 @@
 // local-storage.js
 // Simulando una respuesta asincrónica con un retardo de 2 segundos
 
-const delay = 2; // en segundos
+const delay = 0.3; // en segundos
 
 // Función asincrónica para leer del localStorage
 export function leer(clave) {
@@ -10,8 +10,7 @@ export function leer(clave) {
       try {
         const valor = JSON.parse(localStorage.getItem(clave));
         resolve(valor);
-      } 
-      catch (error) {
+      } catch (error) {
         reject(error);
       }
     }, delay * 1000);
@@ -45,11 +44,6 @@ export function limpiar(clave) {
     }, delay * 1000);
   });
 }
-
-
-
-
-
 
 // Función para convertir de JSON string a objeto
 export function jsonToObject(jsonString) {
