@@ -1,19 +1,19 @@
-import { Anuncio } from "./Anuncio";
+import { Anuncio } from "./Anuncio.js";
 
-class AnuncioAuto extends Anuncio {
+export default class AnuncioAuto extends Anuncio {
   constructor(
     id,
     titulo,
     descripcion,
     transaccion,
     precio,
-    num_puertas,
-    num_kms,
+    puertas,
+    kms,
     potencia
   ) {
     super(id, titulo, descripcion, transaccion, precio);
-    this.num_puertas = num_puertas;
-    this.num_kms = num_kms;
-    this.potencia = potencia;
+    this.puertas = +puertas;
+    this.kms = +kms;
+    this.potencia = +potencia;
   }
 }

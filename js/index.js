@@ -1,4 +1,4 @@
-import { Anuncio } from "./Anuncio.js";
+import AnuncioAuto from "./Anuncio_Auto.js";
 import {
   leer,
   escribir,
@@ -29,7 +29,7 @@ async function loadItems() {
   const objetos = jsonToObject(str) || [];
 
   objetos.forEach((obj) => {
-    const model = new Anuncio(...Object.values(obj));
+    const model = new AnuncioAuto(...Object.values(obj));
 
     items.push(model);
   });
@@ -48,7 +48,16 @@ function rellenarTabla() {
 
   tbody.innerHTML = ""; // Me aseguro que esté vacio, hago referencia al agregar otro
 
-  const celdas = ["id", "titulo", "descripcion", "transaccion", "precio"];
+  const celdas = [
+    "id",
+    "titulo",
+    "descripcion",
+    "transaccion",
+    "precio",
+    "puertas",
+    "kms",
+    "potencia",
+  ];
 
   items.forEach((item) => {
     let nuevaFila = document.createElement("tr");
@@ -75,13 +84,18 @@ function escuchandoFormulario() {
 
     let fechaActual = new Date();
 
-    const model = new Anuncio(
+    const model = new AnuncioAuto(
       fechaActual.getTime(),
       formulario.querySelector("#titulo").value,
       formulario.querySelector("#descripcion").value,
       document.querySelector('input[name="transaccion"]:checked').value,
-      formulario.querySelector("#precio").value
+      formulario.querySelector("#precio").value,
+      formulario.querySelector("#puertas").value,
+      formulario.querySelector("#kms").value,
+      formulario.querySelector("#potencia").value
     );
+
+    console.log(model);
 
     const respuesta = model.verify();
 

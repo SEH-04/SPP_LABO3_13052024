@@ -60,9 +60,6 @@ footer {
   font-family: poppins, sans-serif;
 }
 
-
-
-
 .container-sections {
   width: 100%;
 
@@ -115,6 +112,7 @@ footer {
   margin: 1rem auto;
 
   display: flex;
+  gap: .5rem;
   justify-content: center;
 }
 
